@@ -34,6 +34,15 @@ const AssistantMessage = styled.div`
     word-wrap: break-word;
 `;
 
+interface Message {
+    content: string;
+    role: 'user' | 'assistant';
+}
+
+interface ChatDisplayProps {
+    messages: Message[];
+}
+
 const ChatDisplay: React.FC<{ messages: { content: string, role: 'user' | 'assistant' }[] }> = ({ messages }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -44,17 +53,13 @@ const ChatDisplay: React.FC<{ messages: { content: string, role: 'user' | 'assis
     }, [messages]);
 
     return (
-        <Container ref={containerRef}>
-            {messages.map((message, index) => (
-                <React.Fragment key={index}>
-                    {message.role === 'user' ? (
-                        <Message>{message.content}</Message>
-                    ) : (
-                        <AssistantMessage>{message.content}</AssistantMessage>
-                    )}
-                </React.Fragment>
+        <div>
+            {messages.map((msg, index) => (
+                <div key={index}>
+                    <strong>{msg.role}:</strong> {msg.content}
+                </div>
             ))}
-        </Container>
+        </div>
     );
 };
 

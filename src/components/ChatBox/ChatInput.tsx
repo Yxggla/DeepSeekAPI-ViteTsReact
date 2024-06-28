@@ -4,36 +4,66 @@ import React, { useState } from 'react';
 import { Input, Button } from 'antd';
 import styled from 'styled-components';
 
+const { TextArea } = Input;
+
 const Container = styled.div`
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #fff;
+    padding-bottom: 0px;
+    background-color:#fff;
     border-top: 1px solid #ccc;
+`;
+
+const StyledTextArea = styled(TextArea)`
+    flex: 1;
+    margin: 10px;
+    margin-bottom: 0px;
+    border-radius: 8px;
+    resize: none;
+    overflow: auto;
+    padding: 10px;
+    font-size: 16px;
+    height: 50px; 
+    background-color: #f5f5f5;
+`;
+
+const SendButton = styled(Button)`
+    margin: 10px;
+    margin-bottom: 0px;
+    border-radius: 8px;
+    font-size: 16px;
+    height: 50px;
 `;
 
 const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit }) => {
     const [inputValue, setInputValue] = useState('');
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         if (inputValue.trim() !== '') {
             onSubmit(inputValue);
             setInputValue('');
         }
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSubmit();
+        }
+    };
+
     return (
         <Container>
             <form onSubmit={handleSubmit} style={{ display: 'flex', width: '100%' }}>
-                <Input
-                    type="text"
+                <StyledTextArea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="请输入消息..."
-                    style={{ flex: 1, marginRight: 10 }}
+                    autoSize={{ minRows: 1, maxRows: 8 }} // 设置自动调整高度的行数范围
                 />
-                <Button type="primary" htmlType="submit">发送</Button>
+                <SendButton type="primary" onClick={handleSubmit}>发送</SendButton>
             </form>
         </Container>
     );

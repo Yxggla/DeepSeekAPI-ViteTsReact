@@ -1,72 +1,95 @@
 // ChatComponent.tsx
 
-import React, { useState } from 'react';
+import React, {useState,useEffect} from 'react';
 import styled from 'styled-components';
 import ChatDisplay from './ChatDisplay';
 import ChatInput from './ChatInput';
-import { callDeepSeekApi } from '../../Services/ApiCaller.tsx'; // 假设这里的路径是正确的
+import axios from 'axios';
+import { callDeepSeekApi } from '../../Services/ApiCaller.tsx';
+import { Message } from '../../types/Types.tsx';
+
+const OuterContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background-color: #e0e0e0;
+`;
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 98%;
+    width: 100%;
+    height: 100%; 
     background-color: #f7f7f7;
 `;
 
 const ChatArea = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     overflow: hidden;
 `;
 
 const ChatInputContainer = styled.div`
-  width: 100%;
-  padding: 10px;
-  background-color: #fff;
-  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
 `;
 
-const ChatComponent: React.FC = () => {
-    const [messages, setMessages] = useState<{ content: string; role: 'user' | 'assistant' }[]>([]);
 
-    const handleUserMessage = async (message: string) => {
-        setMessages((prevMessages) => [
-           ...prevMessages,
-            { content: message, role: 'user' },
-        ]);
-        request(message)
+//上面信息为css
+
+const ChatComponent: React.FC = () => {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [activeAssistantId, setActiveAssistantId] = useState<string | null>(null);
+
+    // 处理从 API 返回的单个消息片段
+    const handleReceivedMessage = (message: Message) => {
+        setMessages((prevMessages) => {
+            const existingMessageIndex = prevMessages.findIndex(msg => msg.id === message.id);
+
+            if (existingMessageIndex !== -1) {
+                const updatedMessages = [...prevMessages];
+                updatedMessages[existingMessageIndex] = message;
+                return updatedMessages;
+            } else {
+                return [...prevMessages, message];
+            }
+        });
     };
 
-    const request= async (message: string) => {
-        const token = 'sk-50b876eb404543409a295d667916663a'; //  API Token
-        try {
-            const response = await callDeepSeekApi({ token, inputValue: message });
-            console.log(response);
-            const assistantMessage = response.choices[0]?.message?.content;
-            if (assistantMessage) {
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { content: assistantMessage, role: 'assistant' },
-                ]);
-            }
-        } catch (error) {
-            console.error('Error calling API:', error);
-        }
-    }
+    // 处理 API 完成后返回的完整消息
+    const handleCompleteMessage = (messageId: { id: string }) => {
+        setActiveAssistantId(null);
+    };
 
+    const handleUserMessage = async (message:string) => {
+        const userMessage: Message = { content: message, role: 'user', id: 'user-message-' + Date.now() };
+        setMessages((prevMessages) => [...prevMessages, userMessage]);
+        const token = 'sk-50b876eb404543409a295d667916663a'; // 请确保替换为实际的 API Token
+        const assistantMessageId = 'assistant-message-' + Date.now();
+        setActiveAssistantId(assistantMessageId);
+        await callDeepSeekApi({
+            token,
+            inputValue: message,
+            onMessage: handleReceivedMessage,
+            onComplete: handleCompleteMessage,
+        });
+    };
 
     return (
-        <Container>
-            <ChatArea>
-                <ChatDisplay messages={messages} />
-            </ChatArea>
-            <ChatInputContainer>
-                <ChatInput onSubmit={handleUserMessage} />
-            </ChatInputContainer>
-        </Container>
+        <OuterContainer>
+            <Container>
+                <ChatArea>
+                    <ChatDisplay messages={messages}/>
+                </ChatArea>
+                <ChatInputContainer>
+                    <ChatInput onSubmit={handleUserMessage}/>
+                </ChatInputContainer>
+            </Container>
+        </OuterContainer>
     );
 };
 
