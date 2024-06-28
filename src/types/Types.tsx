@@ -4,6 +4,10 @@
 export interface Message {
     content: string;
     role: 'user' | 'assistant';
-    id: string;
+    id: string | null;
+}
+
+export interface ChatDisplayProps {
+    messages: Message[];
 }
 

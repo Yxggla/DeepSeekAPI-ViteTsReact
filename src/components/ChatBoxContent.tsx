@@ -11,14 +11,13 @@ const AppContent: React.FC = () => {
     return (
         <Content
             style={{
-                margin: '24px 16px',
+                margin: '24px 36px',
                 padding: 24,
                 minHeight: 280,
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
                 flex: 1,
                 height:'100%',
-                overflow: 'auto', // 自动出现滚动条
             }}
         >
            <ChatComponent />

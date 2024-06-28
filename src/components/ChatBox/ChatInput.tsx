@@ -1,17 +1,18 @@
 // ChatInput.tsx
 
-import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import React, {useState} from 'react';
+import {Input, Button} from 'antd';
 import styled from 'styled-components';
 
-const { TextArea } = Input;
+
+const {TextArea} = Input;
 
 const Container = styled.div`
     display: flex;
     align-items: center;
     padding: 10px;
     padding-bottom: 0px;
-    background-color:#fff;
+    background-color: #fff;
     border-top: 1px solid #ccc;
 `;
 
@@ -24,7 +25,7 @@ const StyledTextArea = styled(TextArea)`
     overflow: auto;
     padding: 10px;
     font-size: 16px;
-    height: 50px; 
+    height: 50px;
     background-color: #f5f5f5;
 `;
 
@@ -36,11 +37,11 @@ const SendButton = styled(Button)`
     height: 50px;
 `;
 
-const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit }) => {
+const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}) => {
     const [inputValue, setInputValue] = useState('');
-
+    const [isComposing, setIsComposing] = useState(false);
     const handleSubmit = () => {
-        if (inputValue.trim() !== '') {
+        if (inputValue.trim() !== ''&& !isComposing) {
             onSubmit(inputValue);
             setInputValue('');
         }
@@ -52,16 +53,24 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
             handleSubmit();
         }
     };
+    const handleCompositionStart = () => {
+        setIsComposing(true);
+    };
+    const handleCompositionEnd = () => {
+        setIsComposing(false);
+    };
 
     return (
         <Container>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', width: '100%' }}>
+            <form onSubmit={handleSubmit} style={{display: 'flex', width: '100%'}}>
                 <StyledTextArea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    onCompositionStart={handleCompositionStart}
+                    onCompositionEnd={handleCompositionEnd}
                     placeholder="请输入消息..."
-                    autoSize={{ minRows: 1, maxRows: 8 }} // 设置自动调整高度的行数范围
+                    autoSize={{minRows: 1, maxRows: 8}} // 设置自动调整高度的行数范围
                 />
                 <SendButton type="primary" onClick={handleSubmit}>发送</SendButton>
             </form>
@@ -70,3 +79,6 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
 };
 
 export default ChatInput;
+
+
+
