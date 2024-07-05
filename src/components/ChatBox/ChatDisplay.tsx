@@ -21,12 +21,12 @@ const Container = styled.div` flex: 1;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #007bff;
+        background-color: #B5B5B5;
         border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-        background-color: #0056b3;
+        background-color: #909090;
     }
 `;
 

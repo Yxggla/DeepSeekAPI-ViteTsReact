@@ -11,3 +11,43 @@ export interface ChatDisplayProps {
     messages: Message[];
 }
 
+export interface LoginModalProps {
+    visible: boolean;
+    onCancel: () => void;
+    onLogin: (values: { username: string; password: string }) => void;
+}
+
+export interface RegisterModalProps {
+    visible: boolean;
+    onCancel: () => void;
+    onRegister: (values: { username: string; password: string }) => void;
+}
+
+export interface HeaderProps {
+    collapsed: boolean;
+    toggleCollapse: () => void;
+}
+
+
+export interface UserRegister {
+    username: string;
+    tel: string;
+    password: string;
+}
+
+export interface LoginFormValues {
+    username: string;
+    password: string;
+}
+
+export interface UserInformation {
+    username: string;
+    tel: string;
+}
+
+export interface AuthState {
+    isLoggedIn: boolean;
+    userInformation: UserInformation | null;
+    setUser: (userInformation: UserInformation) => void;
+    logout: () => void;
+}

@@ -1,6 +1,5 @@
 // apiCaller.ts
 
-import axios from 'axios';
 import {Message} from '../types/Types.tsx';
 
 interface ApiConfig {
