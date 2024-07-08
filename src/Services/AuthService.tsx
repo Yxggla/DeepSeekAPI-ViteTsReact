@@ -18,10 +18,9 @@ export const register = async (user: UserRegister) => {
 export const login = async (values: LoginFormValues) => {
     try {
         const response = await axios.post(`${API_URL}/auth/login`, values);
-        const { token,user } = response.data;
+        const { token} = response.data;
         // 存储令牌
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('token', token);
         console.log(response.data);
         return response;
     } catch (error) {
@@ -31,12 +30,12 @@ export const login = async (values: LoginFormValues) => {
 
 // 获取存储的token
 export const getToken = () => {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
 };
 
 // 清除存储的token
 export const logoutToken = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
 };
 
 
