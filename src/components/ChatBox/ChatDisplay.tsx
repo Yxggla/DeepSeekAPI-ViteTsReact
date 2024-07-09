@@ -55,8 +55,11 @@ const AssistantMessage = styled.div`
     word-wrap: break-word;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 16px;
-    //overflow-x: auto; /* 当内容超过宽度时显示x轴滚动条 */
-    //white-space: nowrap;
+    & pre {
+        margin: 8px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
         height: 8px;
@@ -72,6 +75,13 @@ const AssistantMessage = styled.div`
         background-color: #909090;
     }
     line-height: 1.5;
+    /* 覆盖默认的margin */
+    p {
+        margin: 2px;
+    };
+    h1, h2, h3, h4, h5, h6, ul, ol{
+        margin: 8px;
+    }
 `;
 
 
