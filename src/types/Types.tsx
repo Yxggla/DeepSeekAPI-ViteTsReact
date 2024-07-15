@@ -51,3 +51,15 @@ export interface AuthState {
     setUser: (userInformation: UserInformation) => void;
     logout: () => void;
 }
+
+export interface ApiConfig {
+    token: string;
+    inputValue: string;
+    onMessage: (message: Message) => void;
+    onComplete: (messageId: { id: string }) => void;
+}
+
+export interface AppState {
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
+}

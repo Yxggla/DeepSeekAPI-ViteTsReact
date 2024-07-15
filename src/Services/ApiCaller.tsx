@@ -1,42 +1,39 @@
 // apiCaller.ts
-
-import {Message} from '../types/Types.tsx';
-
-interface ApiConfig {
-    token: string;
-    inputValue: string;
-    onMessage: (message: Message) => void;
-    onComplete: (messageId: { id: string }) => void;
-}
+import ApiCallerStore from '../store/ApiCallerStore';
+import {ApiConfig,} from '../types/Types.tsx';
 
 export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}: ApiConfig) => {
-    const data = JSON.stringify({
-        "messages": [
-            {
-                "content": inputValue,
-                "role": "user"
-            }
-        ],
-        "model": "deepseek-coder",
-        "frequency_penalty": 0,
-        "max_tokens": 2048,
-        "presence_penalty": 0,
-        "stop": null,
-        "stream": true,
-        "temperature": 1,
-        "top_p": 1,
-        "logprobs": false,
-        "top_logprobs": null
-    });
-        //v1 fetch
+    const { setLoading, controller, setController } = ApiCallerStore.getState();
+    if (controller && !controller.signal.aborted) {
+        controller.abort();
+    }
 
+    // 创建一个新的 AbortController 实例
+    const newController = new AbortController();
+    setController(newController);
+
+    setLoading(true);
+
+    try {
         const response = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: data
+            body: JSON.stringify({
+                messages: [{ content: inputValue, role: 'user' }],
+                model: 'deepseek-coder',
+                frequency_penalty: 0,
+                max_tokens: 2048,
+                presence_penalty: 0,
+                stream: true,
+                temperature: 1,
+                top_p: 1,
+                logprobs: false,
+                top_logprobs: null
+            }),
+            signal: newController.signal // 使用新的 AbortController 实例
         });
 
         const reader = response.body?.getReader();
@@ -44,13 +41,12 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
         let combinedContent = '';
         const messageId = 'assistant-message-' + Date.now();
 
-
         const readStream = async () => {
             while (true) {
-                const {done, value} = await reader?.read()!;
+                const { done, value } = await reader?.read()!;
                 if (done) {
-                    console.log('Combined Content:', combinedContent);
-                    onComplete({id: messageId});
+                    onComplete({ id: messageId });
+                    setLoading(false);
                     break;
                 }
 
@@ -59,8 +55,8 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
 
                 for (const line of lines) {
                     if (line === 'data: [DONE]') {
-                        console.log('Stream completed');
-                        onComplete({id: messageId});
+                        onComplete({ id: messageId });
+                        setLoading(false);
                         return;
                     }
 
@@ -69,7 +65,7 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
                         const deltaContent = json.choices[0].delta.content;
                         if (deltaContent) {
                             combinedContent += deltaContent;
-                            onMessage({content: combinedContent, role: 'assistant', id: messageId});
+                            onMessage({ content: combinedContent, role: 'assistant', id: messageId });
                         }
                     }
                 }
@@ -77,5 +73,12 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
         };
 
         await readStream();
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.log('请求被取消');
+        } else {
+            console.error('API调用失败:', error);
+        }
+        setLoading(false);
     }
-    ;
+};

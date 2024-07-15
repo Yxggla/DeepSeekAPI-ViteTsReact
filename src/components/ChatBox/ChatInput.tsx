@@ -3,7 +3,7 @@
 import React, {useState} from 'react';
 import {Input, Button} from 'antd';
 import styled from 'styled-components';
-
+import ApiCallerStore from "../../store/ApiCallerStore.tsx";
 
 const {TextArea} = Input;
 
@@ -38,10 +38,15 @@ const SendButton = styled(Button)`
 `;
 
 const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}) => {
+    const loading = ApiCallerStore(state => state.loading);
+    const setLoading = ApiCallerStore(state => state.setLoading);
+
     const [inputValue, setInputValue] = useState('');
     const [isComposing, setIsComposing] = useState(false);
+
     const handleSubmit = () => {
         if (inputValue.trim() !== ''&& !isComposing) {
+            setLoading(true); // 启动加载状态
             onSubmit(inputValue);
             setInputValue('');
         }
@@ -60,6 +65,14 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}
         setIsComposing(false);
     };
 
+    const handlePause = () => {
+        if (loading) {
+            setLoading(false); // 停止加载状态
+        } else {
+            handleSubmit();
+        }
+    };
+
     return (
         <Container>
             <form onSubmit={handleSubmit} style={{display: 'flex', width: '100%'}}>
@@ -72,7 +85,9 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}
                     placeholder="请输入消息..."
                     autoSize={{minRows: 1, maxRows: 8}} // 设置自动调整高度的行数范围
                 />
-                <SendButton type="primary" onClick={handleSubmit}>发送</SendButton>
+                <SendButton type="primary" onClick={handlePause}>
+                    {loading ? '暂停' : '发送'}
+                </SendButton>
             </form>
         </Container>
     );
