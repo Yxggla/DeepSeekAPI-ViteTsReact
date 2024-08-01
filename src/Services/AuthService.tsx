@@ -1,13 +1,12 @@
 // src/services/AuthService.tsx
 import axios from 'axios';
-import { UserRegister,LoginFormValues } from '../types/Types.tsx'
-const API_URL = 'http://localhost:3010'; // 你的后端API地址
+import { UserRegister, LoginFormValues } from '../types/Types.tsx'
 
 
 //注册
 export const register = async (user: UserRegister) => {
     try {
-        const response = await axios.post(`${API_URL}/auth/register`, user);
+        const response = await axios.post(`${import.meta.env.VITE_Backend_API_URL}/register`, user);
         return response;
     } catch (error) {
         throw new Error(error.response?.data || '注册失败');
@@ -17,8 +16,8 @@ export const register = async (user: UserRegister) => {
 //登陆
 export const login = async (values: LoginFormValues) => {
     try {
-        const response = await axios.post(`${API_URL}/auth/login`, values);
-        const { token} = response.data;
+        const response = await axios.post(`${import.meta.env.VITE_Backend_API_URL}/login`, values);
+        const { token } = response.data;
         // 存储令牌
         sessionStorage.setItem('token', token);
         console.log(response.data);

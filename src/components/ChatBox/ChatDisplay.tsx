@@ -9,9 +9,11 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto; /* 允许父元素垂直滚动 */
-    padding: 20px;
-    background-color: #fff;
+    padding: 20px 50px 30px 50px;
+    background-color: #f9f9f9;
     max-height: 100%;
+    border-radius:10px,
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
@@ -33,33 +35,47 @@ const MessageContainer = styled.div`
     align-self: flex-end;
     background-color: #007bff;
     color: white;
-    padding: 8px 12px;
-    border-radius: 15px;
+    padding: 12px 16px;
+    border-radius: 18px;
     margin: 8px 0;
     max-width: 80%;
     word-wrap: break-word;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 16px;
     line-height: 1.4;
+    position: relative;
+
+     &::after {
+        content: '';
+        position: absolute;
+        right: -8px;
+        top: 10px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent transparent #007bff;
+    }
 `;
 
 const AssistantMessage = styled.div`
     height: auto;
     align-self: flex-start;
-    background-color: #f1f1f1;
+    background-color: #fff;
     color: #333;
-    padding: 8px 12px;
-    border-radius: 15px;
+    padding: 12px 16px;
+    border-radius: 18px;
     margin: 8px 0;
     max-width: 80%;
     word-wrap: break-word;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 16px;
+    position: relative;
+
     & pre {
         margin: 8px;
         white-space: pre-wrap;
         word-wrap: break-word;
     }
+
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
         height: 8px;
@@ -74,13 +90,25 @@ const AssistantMessage = styled.div`
     &::-webkit-scrollbar-thumb:hover {
         background-color: #909090;
     }
+
     line-height: 1.5;
+
     /* 覆盖默认的margin */
     p {
         margin: 2px;
-    };
-    h1, h2, h3, h4, h5, h6, ul, ol{
+    }
+    h1, h2, h3, h4, h5, h6, ul, ol {
         margin: 8px;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 10px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent #fff transparent transparent;
     }
 `;
 

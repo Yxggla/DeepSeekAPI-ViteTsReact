@@ -1,11 +1,10 @@
 import axios from "axios";
-const API_URL = 'http://localhost:3010'; // 你的后端API地址
-import {getToken} from "./AuthService.tsx"
+import { getToken } from "./AuthService.tsx"
 
 export const getUserInformation = async () => {
     try {
-        const token=getToken()
-        const response = await axios.get(`${API_URL}/api/user`, {
+        const token = getToken()
+        const response = await axios.get(`${import.meta.env.VITE_Backend_API_URL}/user`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

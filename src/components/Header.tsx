@@ -1,12 +1,13 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button, Layout, theme,message } from 'antd';
+import { Button, Layout, theme, message } from 'antd';
 import LoginModal from './Auth/Login.tsx';
 import RegisterModal from './Auth/Register.tsx';
-import {HeaderProps,LoginFormValues,UserInformation} from '../types/Types.tsx'
-import {getUserInformation} from '../Services/User.tsx';
-import {login,getToken,logoutToken} from '../Services/AuthService.tsx';
+import { HeaderProps, LoginFormValues, UserInformation } from '../types/Types.tsx'
+import { getUserInformation } from '../Services/User.tsx';
+import { login, getToken, logoutToken } from '../Services/AuthService.tsx';
 import useAuthStore from '../store/store';
+import { Hidden } from '@mui/material';
 const { Header } = Layout;
 
 
@@ -73,37 +74,36 @@ const AppHeader: React.FC<HeaderProps> = ({ collapsed, toggleCollapse }) => {
     };
 
     return (
-        <Header style={{padding: 0, background: colorBgContainer, width: '100%'}}>
+        <Header style={{ padding: 0, background: colorBgContainer, width: '100%' }}>
             <Button
                 type="text"
-                icon={collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={toggleCollapse}
                 style={{
-                    fontSize: '16px',
-                    width: 64,
-                    height: 64,
+                    width: 68,
+                    height: 68,
                 }}
             />
-            <span style={{fontFamily: 'Arial, sans-serif', fontWeight: 'bold', color: '#1890ff', fontSize: '18px'}}>
+            <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold', color: '#1890ff', fontSize: '20px' }}>
                 DeepSeek GPT
             </span>
-            <div style={{float: 'right', marginRight: '30px'}}>
+            <div style={{ float: 'right', marginRight: '30px' }}>
                 {isLoggedIn && userInformation ? (
                     <>
-                        <span style={{ fontFamily: 'Arial, sans-serif', color: '#1890ff', fontSize: '20px', marginRight: '20px' }}>
+                        <span className='text-violet-500 text-[2.2rem] mr-10'>
                             欢迎, {userInformation.username}
                         </span>
-                        <Button type="primary" ghost onClick={handleLogout} style={{marginRight: '8px'}}>
+                        <Button type="primary" ghost onClick={handleLogout} className="mr-4 text-[1.6rem]">
                             登出
                         </Button>
                     </>
 
                 ) : (
                     <>
-                        <Button type="primary" style={{marginRight: '12px'}} onClick={showLoginModal}>
+                        <Button type="primary" className="mr-8 text-[1.6rem]" onClick={showLoginModal}>
                             登录
                         </Button>
-                        <Button type="primary" ghost onClick={showRegisterModal} style={{marginRight: '8px'}}>
+                        <Button type="primary" ghost onClick={showRegisterModal} className="mr-4 text-[1.6rem]">
                             注册
                         </Button>
                     </>

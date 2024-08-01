@@ -11,7 +11,7 @@ const { TextArea } = Input;
 const Container = styled.div`
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
     padding-bottom: 0px;
     background-color: #fff;
     border-top: 1px solid #ccc;
@@ -20,7 +20,7 @@ const Container = styled.div`
 const StyledTextArea = styled(TextArea)`
     flex: 1;
     margin: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
     border-radius: 8px;
     resize: none;
     overflow: auto;
@@ -35,7 +35,7 @@ const SendButton = styled(Button)`
     margin-bottom: 0px;
     border-radius: 8px;
     font-size: 16px;
-    height: 50px;
+    height: 44px;
 `;
 
 const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit }) => {
