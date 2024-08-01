@@ -1,8 +1,8 @@
 // ChatDisplay.tsx
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import {ChatDisplayProps} from '../../types/Types.tsx';
-import {marked} from 'marked';
+import { ChatDisplayProps } from '../../types/Types.tsx';
+import { marked } from 'marked';
 
 const Container = styled.div`
     flex: 1;
@@ -89,7 +89,7 @@ const createMarkup = (content: string) => {
     return { __html: marked(content) };
 };
 
-const ChatDisplay: React.FC<ChatDisplayProps> = ({messages}) => {
+const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (containerRef.current) {

@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind screens;
+@tailwind variants;
+
+body {
+  overscroll-behavior-y: none;
+  color: #333;
+}
+
+html {
+  font-size: 1.333333vw;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 0.71429vw;
+  }
+}
+
+@media (min-width: 1400px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+body * {
+  font-family: jost;
+}
+
+@font-face {
+  font-family: jost;
+  font-style: normal;
+  src: url('/fonts/Jost_VariableFont_wght.ttf') format('truetype');
+}

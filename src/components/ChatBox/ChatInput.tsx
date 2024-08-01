@@ -1,11 +1,11 @@
 // ChatInput.tsx
 
-import React, {useState} from 'react';
-import {Input, Button} from 'antd';
+import React, { useState } from 'react';
+import { Input, Button } from 'antd';
 import styled from 'styled-components';
 import ApiCallerStore from "../../store/ApiCallerStore.tsx";
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
 const Container = styled.div`
     display: flex;
@@ -37,7 +37,7 @@ const SendButton = styled(Button)`
     height: 50px;
 `;
 
-const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}) => {
+const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit }) => {
     const loading = ApiCallerStore(state => state.loading);
     const setLoading = ApiCallerStore(state => state.setLoading);
 
@@ -45,7 +45,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}
     const [isComposing, setIsComposing] = useState(false);
 
     const handleSubmit = () => {
-        if (inputValue.trim() !== ''&& !isComposing) {
+        if (inputValue.trim() !== '' && !isComposing) {
             setLoading(true); // 启动加载状态
             onSubmit(inputValue);
             setInputValue('');
@@ -75,7 +75,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}
 
     return (
         <Container>
-            <form onSubmit={handleSubmit} style={{display: 'flex', width: '100%'}}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', width: '100%' }}>
                 <StyledTextArea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -83,7 +83,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({onSubmit}
                     onCompositionStart={handleCompositionStart}
                     onCompositionEnd={handleCompositionEnd}
                     placeholder="请输入消息..."
-                    autoSize={{minRows: 1, maxRows: 8}} // 设置自动调整高度的行数范围
+                    autoSize={{ minRows: 1, maxRows: 8 }} // 设置自动调整高度的行数范围
                 />
                 <SendButton type="primary" onClick={handlePause}>
                     {loading ? '暂停' : '发送'}

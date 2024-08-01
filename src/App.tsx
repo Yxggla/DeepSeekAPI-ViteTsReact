@@ -12,7 +12,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <Layout style={{ height: '100vh' ,width:'100%'}}>
+        <Layout style={{ height: '100vh', width: '100%' }}>
             <Sidebar collapsed={collapsed} />
             <Layout style={{ width: '100%' }}> {/* 确保子布局占满剩余宽度 */}
                 <AppHeader collapsed={collapsed} toggleCollapse={toggleCollapse} />
