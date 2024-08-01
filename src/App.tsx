@@ -4,6 +4,7 @@ import Sidebar from './components/Sliderbar.tsx';
 import AppHeader from './components/Header';
 import AppContent from './components/ChatBoxContent.tsx';
 
+
 const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
 

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Input, Button } from 'antd';
 import styled from 'styled-components';
 import ApiCallerStore from "../../store/ApiCallerStore.tsx";
+import { log } from 'console';
 
 const { TextArea } = Input;
 
@@ -46,7 +47,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
 
     const handleSubmit = () => {
         if (inputValue.trim() !== '' && !isComposing) {
-            setLoading(true); // 启动加载状态
+            setLoading(true); // 启动加载（流式传输）状态
             onSubmit(inputValue);
             setInputValue('');
         }
@@ -88,6 +89,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
                 <SendButton type="primary" onClick={handlePause}>
                     {loading ? '暂停' : '发送'}
                 </SendButton>
+
             </form>
         </Container>
     );

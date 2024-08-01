@@ -1,8 +1,8 @@
 // apiCaller.ts
 import ApiCallerStore from '../store/ApiCallerStore';
-import {ApiConfig,} from '../types/Types.tsx';
+import { ApiConfig, } from '../types/Types.tsx';
 
-export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}: ApiConfig) => {
+export const callDeepSeekApi = async ({ inputValue, onMessage, onComplete }: ApiConfig) => {
     const { setLoading, controller, setController } = ApiCallerStore.getState();
     if (controller && !controller.signal.aborted) {
         controller.abort();
@@ -12,14 +12,13 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
     const newController = new AbortController();
     setController(newController);
 
-    setLoading(true);
 
     try {
         const response = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
             },
             body: JSON.stringify({
                 messages: [{ content: inputValue, role: 'user' }],
@@ -43,6 +42,13 @@ export const callDeepSeekApi = async ({token, inputValue, onMessage, onComplete}
 
         const readStream = async () => {
             while (true) {
+
+                if (!ApiCallerStore.getState().loading) { //点击按钮后状态为false,获取状态为false的时候中断
+                    newController.abort();
+                    console.log('请求手动被取消');
+                    return;
+                }
+
                 const { done, value } = await reader?.read()!;
                 if (done) {
                     onComplete({ id: messageId });

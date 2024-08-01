@@ -38,11 +38,9 @@ const ChatComponent: React.FC = () => {
     const handleUserMessage = async (message: string) => {
         const userMessage: Message = { content: message, role: 'user', id: 'user-message-' + Date.now() };
         setMessages((prevMessages) => [...prevMessages, userMessage]);
-        const token = 'sk-50b876eb404543409a295d667916663a'; // 请确保替换为实际的 API Token
         const assistantMessageId = 'assistant-message-' + Date.now();
         setActiveAssistantId(assistantMessageId);
         await callDeepSeekApi({
-            token,
             inputValue: message,
             onMessage: handleReceivedMessage,
             onComplete: handleCompleteMessage,
