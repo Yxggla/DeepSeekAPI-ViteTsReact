@@ -1,4 +1,4 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite制作的类ChatGpt前端网页
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -28,3 +28,7 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## If you want to see the warehouse on the back end please move on
+## 如果要看后端代码仓库，请移步至
+https://github.com/Yxggla/DeepSeekAPI--Web--backend
