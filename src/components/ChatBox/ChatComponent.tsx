@@ -7,8 +7,6 @@ import { callDeepSeekApi } from '../../Services/ApiCaller.tsx';
 import { Message } from '../../types/Types.tsx';
 
 
-
-
 //上面信息为css
 
 const ChatComponent: React.FC = () => {
@@ -47,6 +45,8 @@ const ChatComponent: React.FC = () => {
         });
     };
 
+
+
     return (
         <div className="flex flex-col justify-center items-center h-full w-full bg-gray-200">
             <div className="flex flex-col w-full h-full bg-gray-100">
@@ -57,6 +57,7 @@ const ChatComponent: React.FC = () => {
                     <ChatInput onSubmit={handleUserMessage} />
                 </div>
             </div>
+
         </div>
     );
 };

@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ChatDisplayProps } from '../../types/Types.tsx';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 const Container = styled.div`
     flex: 1;
@@ -12,7 +13,7 @@ const Container = styled.div`
     padding: 20px 50px 30px 50px;
     background-color: #f9f9f9;
     max-height: 100%;
-    border-radius:10px,
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     
     /* 自定义滚动条 */
@@ -69,11 +70,48 @@ const AssistantMessage = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 16px;
     position: relative;
+    line-height: 1.5;
 
     & pre {
-        margin: 8px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
+        margin: 8px 0;
+        padding: 12px;
+        background-color: #f4f4f4;
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    & code {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px
+    }
+
+    & blockquote {
+        border-left: 4px solid #ddd;
+        padding-left: 16px;
+        margin: 8px 0;
+        color: #666;
+    }
+
+    & img {
+        max-width: 100%;
+        height: auto;
+        margin: 8px 0;
+    }
+
+    & table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 8px 0;
+    }
+
+    & th, & td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    & th {
+        background-color: #f4f4f4;
     }
 
     /* 自定义滚动条 */
@@ -91,14 +129,16 @@ const AssistantMessage = styled.div`
         background-color: #909090;
     }
 
-    line-height: 1.5;
-
     /* 覆盖默认的margin */
     p {
-        margin: 2px;
+        margin: 8px 0;
     }
-    h1, h2, h3, h4, h5, h6, ul, ol {
-        margin: 8px;
+    h1, h2, h3, h4, h5, h6 {
+        margin: 16px 0 8px 0;
+    }
+    ul, ol {
+        margin: 8px 0;
+        padding-left: 20px;
     }
 
     &::before {
@@ -112,9 +152,9 @@ const AssistantMessage = styled.div`
     }
 `;
 
-
 const createMarkup = (content: string) => {
-    return { __html: marked(content) };
+    const sanitizedContent = DOMPurify.sanitize(marked(content));
+    return { __html: sanitizedContent };
 };
 
 const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
@@ -137,4 +177,3 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
     );
 };
 export default ChatDisplay;
-

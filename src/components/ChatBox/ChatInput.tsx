@@ -1,10 +1,12 @@
 // ChatInput.tsx
 
 import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, message as antdMessage } from 'antd';
 import styled from 'styled-components';
 import ApiCallerStore from "../../store/ApiCallerStore.tsx";
-import { log } from 'console';
+import useAuthStore from '../../store/store'; // 引入 useAuthStore
+import LoginModal from '../Auth/Login.tsx';
+import useAuthModal from '../../hooks/useAuthModal.ts';
 
 const { TextArea } = Input;
 
@@ -44,12 +46,25 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
 
     const [inputValue, setInputValue] = useState('');
     const [isComposing, setIsComposing] = useState(false);
+    const { isLoggedIn } = useAuthStore(); // 获取登录状态
+    const {
+        isLoginModalVisible,
+        showLoginModal,
+        handleLoginModalCancel,
+        handleLogin,
+    } = useAuthModal();
+
 
     const handleSubmit = () => {
-        if (inputValue.trim() !== '' && !isComposing) {
-            setLoading(true); // 启动加载（流式传输）状态
-            onSubmit(inputValue);
-            setInputValue('');
+        if (isLoggedIn) {
+            if (inputValue.trim() !== '' && !isComposing) {
+                setLoading(true);
+                onSubmit(inputValue);
+                setInputValue('');
+            }
+        } else {
+            antdMessage.warning('请先登录');
+            showLoginModal();
         }
     };
 
@@ -66,13 +81,20 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
         setIsComposing(false);
     };
 
+
     const handlePause = () => {
-        if (loading) {
-            setLoading(false); // 停止加载状态
+        if (isLoggedIn) {
+            if (loading) {
+                setLoading(false);
+            } else {
+                handleSubmit();
+            }
         } else {
-            handleSubmit();
+            antdMessage.warning('请先登录');
+            showLoginModal();
         }
     };
+
 
     return (
         <Container>
@@ -91,6 +113,12 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
                 </SendButton>
 
             </form>
+            <LoginModal
+                visible={isLoginModalVisible}
+                key={Date.now()}
+                onCancel={handleLoginModalCancel}
+                onLogin={handleLogin}
+            />
         </Container>
     );
 };

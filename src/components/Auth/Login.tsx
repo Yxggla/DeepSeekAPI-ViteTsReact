@@ -1,9 +1,9 @@
 import React from 'react';
-import {Modal, Button, Form, Input, message} from 'antd';
-import {LoginModalProps, LoginFormValues} from '../../types/Types.tsx'
+import { Modal, Button, Form, Input, message } from 'antd';
+import { LoginModalProps, LoginFormValues } from '../../types/Types.tsx'
 
 
-const LoginModal: React.FC<LoginModalProps> = ({visible, onCancel, onLogin,}) => {
+const LoginModal: React.FC<LoginModalProps> = ({ visible, onCancel, onLogin, }) => {
     const [form] = Form.useForm();
 
     const onFinish = async (values: LoginFormValues) => {
@@ -43,20 +43,20 @@ const LoginModal: React.FC<LoginModalProps> = ({visible, onCancel, onLogin,}) =>
                 <Form.Item
                     label="手机号"
                     name="tel"
-                    rules={[{required: true, message: '请输入手机号'},
-                        {pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号码'},]}
+                    rules={[{ required: true, message: '请输入手机号' },
+                    { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号码' },]}
                 >
-                    <Input/>
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     label="密码"
                     name="password"
                     rules={[
-                        {required: true, message: '请输入密码'},
-                        {min: 6, message: '密码至少6个字符'},
+                        { required: true, message: '请输入密码' },
+                        { min: 6, message: '密码至少6个字符' },
                     ]}
                 >
-                    <Input.Password/>
+                    <Input.Password />
                 </Form.Item>
             </Form>
         </Modal>

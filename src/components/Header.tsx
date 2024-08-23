@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button, Layout, theme, message } from 'antd';
+import { Button, Layout, theme } from 'antd';
 import LoginModal from './Auth/Login.tsx';
 import RegisterModal from './Auth/Register.tsx';
-import { HeaderProps, LoginFormValues, UserInformation } from '../types/Types.tsx'
-import { getUserInformation } from '../Services/User.tsx';
-import { login, getToken, logoutToken } from '../Services/AuthService.tsx';
+import { HeaderProps } from '../types/Types.tsx';
 import useAuthStore from '../store/store';
-import { Hidden } from '@mui/material';
+import useAuthModal from '../hooks/useAuthModal.ts';
 const { Header } = Layout;
 
 
@@ -16,62 +14,17 @@ const AppHeader: React.FC<HeaderProps> = ({ collapsed, toggleCollapse }) => {
         token: { colorBgContainer },
     } = theme.useToken();
 
-    const { isLoggedIn, userInformation, setUserInformation, logout } = useAuthStore();
-
-    useEffect(() => {
-        const token = getToken();//刷新的时候如果是有Token的那么就实现fetchUser函数
-        if (token) {
-            fetchUserInformation();
-        }
-    }, []);
-
-    //刷新的时候用的，有token的话再获取一次用户信息
-    const fetchUserInformation = async () => {
-        try {
-            const userData: UserInformation = await getUserInformation(); // 调用获取用户信息的API
-            setUserInformation(userData);
-        } catch (error) {
-            message.error('获取用户信息失败');
-            console.error(error.message);
-        }
-    };
-
-    const [isLoginModalVisible, setLoginModalVisible] = useState(false);
-    const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
-
-    const showLoginModal = () => {
-        setLoginModalVisible(true);
-    };
-
-    const handleLoginModalCancel = () => {
-        setLoginModalVisible(false);
-    };
-
-    const showRegisterModal = () => {
-        setRegisterModalVisible(true);
-    };
-
-    const handleRegisterModalCancel = () => {
-        setRegisterModalVisible(false);
-    };
-
-    //首次要登陆点击登陆键后，处理的函数
-    const handleLogin = async (values: LoginFormValues) => {
-        try {
-            await login(values);
-            message.success('登录成功');
-            handleLoginModalCancel();
-            await fetchUserInformation();
-        } catch (error) {
-            message.error(error.message);
-        }
-    };
-
-    const handleLogout = () => {
-        logoutToken();
-        logout();
-        message.success('已登出');
-    };
+    const { isLoggedIn, userInformation } = useAuthStore();
+    const {
+        isLoginModalVisible,
+        isRegisterModalVisible,
+        showLoginModal,
+        handleLoginModalCancel,
+        showRegisterModal,
+        handleRegisterModalCancel,
+        handleLogin,
+        handleLogout,
+    } = useAuthModal();
 
     return (
         <Header style={{ padding: 0, background: colorBgContainer, width: '100%' }}>
@@ -97,7 +50,6 @@ const AppHeader: React.FC<HeaderProps> = ({ collapsed, toggleCollapse }) => {
                             登出
                         </Button>
                     </>
-
                 ) : (
                     <>
                         <Button type="primary" className="mr-8 text-[1.6rem]" onClick={showLoginModal}>
@@ -110,8 +62,10 @@ const AppHeader: React.FC<HeaderProps> = ({ collapsed, toggleCollapse }) => {
                 )}
             </div>
 
+
             <LoginModal
                 visible={isLoginModalVisible}
+                key={Date.now()}
                 onCancel={handleLoginModalCancel}
                 onLogin={handleLogin}
             />

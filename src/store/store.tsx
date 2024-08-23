@@ -1,8 +1,6 @@
 // store.ts
 import create from 'zustand';
-import {UserInformation , AuthState} from '../types/Types.tsx'
-
-
+import { UserInformation, AuthState } from '../types/Types.tsx'
 
 const useAuthStore = create<AuthState>((set) => ({
     isLoggedIn: false,
