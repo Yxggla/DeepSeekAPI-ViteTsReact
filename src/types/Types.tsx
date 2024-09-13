@@ -43,6 +43,7 @@ export interface LoginFormValues {
 export interface UserInformation {
     username: string;
     tel: string;
+    conversations: any[];
 }
 
 export interface AuthState {
