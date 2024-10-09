@@ -64,3 +64,12 @@ export interface AppState {
     loading: boolean;
     setLoading: (loading: boolean) => void;
 }
+
+
+export interface SaveDataState {
+    title: string;
+    messages: Message[];
+    responses: Message[];
+    setMessageAndResponse: (message: Message, response: Message, title: string) => void; // 更新函数签名
+    clearMessages: () => void;
+}

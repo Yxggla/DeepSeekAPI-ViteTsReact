@@ -7,7 +7,6 @@ import { callDeepSeekApi } from '../../Services/ApiCaller.tsx';
 import { Message } from '../../types/Types.tsx';
 
 
-//上面信息为css
 
 const ChatComponent: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -29,7 +28,7 @@ const ChatComponent: React.FC = () => {
     };
 
     // 处理 API 完成后返回的完整消息
-    const handleCompleteMessage = (messageId: { id: string }) => {
+    const handleCompleteMessage = async (messageId: { id: string }) => {
         setActiveAssistantId(null);
     };
 

@@ -1,9 +1,15 @@
-// ChatDisplay.tsx
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ChatDisplayProps } from '../../types/Types.tsx';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github-dark.css'; // 引入高亮样式
+import saveDataStore from '../../store/saveDataStore.tsx'
+import ApiCallerStore from '../../store/ApiCallerStore.tsx'
+import { saveChats } from '../../Services/User.tsx'
+import { log } from 'console';
+
 
 const Container = styled.div`
     flex: 1;
@@ -62,7 +68,7 @@ const AssistantMessage = styled.div`
     align-self: flex-start;
     background-color: #fff;
     color: #333;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-radius: 18px;
     margin: 8px 0;
     max-width: 80%;
@@ -73,16 +79,16 @@ const AssistantMessage = styled.div`
     line-height: 1.5;
 
     & pre {
-        margin: 8px 0;
-        padding: 12px;
-        background-color: #f4f4f4;
+        padding: 8px;
         border-radius: 12px;
         overflow-x: auto;
+        background-color: #f4f4f4;
     }
 
     & code {
         font-family: 'Courier New', Courier, monospace;
-        font-size: 14px
+        font-size: 14px;
+        border-radius: 12px;
     }
 
     & blockquote {
@@ -152,6 +158,20 @@ const AssistantMessage = styled.div`
     }
 `;
 
+const renderer = new marked.Renderer();
+
+
+renderer.code = ({ text, lang }) => {
+    const validLanguage = hljs.getLanguage(lang) ? lang : 'plaintext';
+    const highlightedCode = hljs.highlight(validLanguage, text || '').value; // 修改此行
+    return `<pre>
+      <code class="hljs ${validLanguage}">${highlightedCode}</code>
+    </pre>`;
+};
+
+marked.setOptions({ renderer });
+
+
 const createMarkup = (content: string) => {
     const sanitizedContent = DOMPurify.sanitize(marked(content));
     return { __html: sanitizedContent };
@@ -159,11 +179,36 @@ const createMarkup = (content: string) => {
 
 const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    // const setMessageAndResponse = saveDataStore(state => state.setMessageAndResponse);
+    const Loading = ApiCallerStore(state => state.loading);
+
+    const saveChatsInformation = async (title: string, firstMessage: string, lastMessage: string) => {
+        try {
+            await saveChats(title, firstMessage, lastMessage);
+        } catch (error) {
+            console.error("保存聊天信息时出错:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (messages.length > 0 && !Loading) {
+            const firstMessage = messages[messages.length - 2];
+            const lastMessage = messages[messages.length - 1];
+            const title = firstMessage.content.substring(0, 5);
+            saveChatsInformation(title, firstMessage.content, lastMessage.content);
+        }
+    }, [messages, Loading]); // 添加 Loading 作为依赖项
+
     useEffect(() => {
         if (containerRef.current) {
             containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
     }, [messages]);
+
+    useEffect(() => {
+        hljs.highlightAll();
+    }, []);
+
     return (
         <Container ref={containerRef}>
             {messages.map((msg, index) => (
@@ -176,4 +221,5 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
         </Container>
     );
 };
+
 export default ChatDisplay;

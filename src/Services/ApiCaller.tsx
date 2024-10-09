@@ -42,19 +42,13 @@ export const callDeepSeekApi = async ({ inputValue, onMessage, onComplete }: Api
 
         const readStream = async () => {
             while (true) {
-
                 if (!ApiCallerStore.getState().loading) { //点击按钮后状态为false,获取状态为false的时候中断
                     newController.abort();
                     console.log('请求手动被取消');
                     return;
                 }
 
-                const { done, value } = await reader?.read()!;
-                if (done) {
-                    onComplete({ id: messageId });
-                    setLoading(false);
-                    break;
-                }
+                const { value } = await reader?.read()!;
 
                 const chunk = decoder.decode(value);
                 const lines = chunk.split('\n').filter(line => line.trim() !== '');
@@ -62,7 +56,6 @@ export const callDeepSeekApi = async ({ inputValue, onMessage, onComplete }: Api
                 for (const line of lines) {
                     if (line === 'data: [DONE]') {
                         onComplete({ id: messageId });
-                        setLoading(false);
                         return;
                     }
 
@@ -79,6 +72,7 @@ export const callDeepSeekApi = async ({ inputValue, onMessage, onComplete }: Api
         };
 
         await readStream();
+        setLoading(false);
     } catch (error) {
         if (error.name === 'AbortError') {
             console.log('请求被取消');
