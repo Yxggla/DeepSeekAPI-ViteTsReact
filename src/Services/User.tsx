@@ -19,7 +19,7 @@ export const getUserInformation = async () => {
 };
 
 
-//获取标题们 没试过
+//获取标题们 10/9 api ok
 export const getTitles = async () => {
     try {
         const token = getToken()
@@ -28,7 +28,6 @@ export const getTitles = async () => {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log(response.data)
         return response.data;
     } catch (error) {
         throw new Error(error.response?.data || '获取标题失败');
@@ -54,7 +53,9 @@ export const getChats = async (title: string) => {
     }
 };
 
-//每次的对应一组的数据存储
+
+
+//每次的对应一组的数据存储 10/9 ok
 export const saveChats = async (title: string, message: string, response: string) => {
     try {
         const token = getToken()
