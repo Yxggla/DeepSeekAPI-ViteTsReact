@@ -8,7 +8,7 @@ import 'highlight.js/styles/github-dark.css'; // 引入高亮样式
 import saveDataStore from '../../store/saveDataStore.tsx'
 import ApiCallerStore from '../../store/ApiCallerStore.tsx'
 import { saveChats } from '../../Services/User.tsx'
-import { log } from 'console';
+import useTitleToMessageStore from '../../store/TitleToMessageStore';
 
 
 const Container = styled.div`
@@ -173,15 +173,21 @@ marked.setOptions({ renderer });
 
 
 const createMarkup = (content: string) => {
+    // 检查 content 是否有效
+    if (!content) {
+        return { __html: '' }; // 或者根据需要返回其他内容
+    }
     const sanitizedContent = DOMPurify.sanitize(marked(content));
     return { __html: sanitizedContent };
 };
 
-const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
+const ChatDisplay: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
-    // const setMessageAndResponse = saveDataStore(state => state.setMessageAndResponse);
     const Loading = ApiCallerStore(state => state.loading);
-
+    const messages = useTitleToMessageStore(state => state.messages);
+    const titles = useTitleToMessageStore(state => state.title);
+    const isNew = useTitleToMessageStore(state => state.isNew);
+    const setIsNew = useTitleToMessageStore((state) => state.setIsNew);
     const saveChatsInformation = async (title: string, firstMessage: string, lastMessage: string) => {
         try {
             await saveChats(title, firstMessage, lastMessage);
@@ -194,10 +200,15 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
         if (messages.length > 0 && !Loading) {
             const firstMessage = messages[messages.length - 2];
             const lastMessage = messages[messages.length - 1];
-            const title = firstMessage.content.substring(0, 5);
+            const title = isNew
+                ? firstMessage.content.substring(0, 8) // 如果是新对话
+                : titles; // 如果不是新对话
             saveChatsInformation(title, firstMessage.content, lastMessage.content);
+            if (isNew) {
+                setIsNew(false)
+            }
         }
-    }, [messages, Loading]); // 添加 Loading 作为依赖项
+    }, [messages, Loading, isNew, titles]); // 添加 isNew 和 titles 作为依赖项ng 作为依赖项
 
     useEffect(() => {
         if (containerRef.current) {
@@ -208,7 +219,7 @@ const ChatDisplay: React.FC<ChatDisplayProps> = ({ messages }) => {
     useEffect(() => {
         hljs.highlightAll();
     }, []);
-
+    console.log("123", messages)
     return (
         <Container ref={containerRef}>
             {messages.map((msg, index) => (
