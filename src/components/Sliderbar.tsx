@@ -16,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     const setMessages = useTitleToMessageStore((state) => state.setMessages);
     const setTitle = useTitleToMessageStore((state) => state.setTitle);
     const setIsNew = useTitleToMessageStore((state) => state.setIsNew);
+    const setIsEmpty = useTitleToMessageStore((state) => state.setIsEmpty);
     const isFirstsend = useTitleToMessageStore((state) => state.isFirstsend);
     const isNew = useTitleToMessageStore((state) => state.isNew);
     // const isSave = useTitleToMessageStore((state) => state.isSave);
@@ -32,7 +33,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     useEffect(() => {
         const fetchTitles = async () => {
             if (isLoggedIn) {
-
                 try {
                     const response = await getTitles();
                     const titles = response; // 获取 API 返回的数据
@@ -41,12 +41,13 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                         label: item.title, // 直接使用返回的 title
                     }));
                     setMenuItems(items);
-                    console.log('isFirstsend', isFirstsend);
-                    console.log('是isNewm吗', isNew)
-                    if (isFirstsend && items.length > 0) {
+                    if (isFirstsend) {
                         setSelectedKey(items.length.toString()); // 选中最后一个对话
 
                     }
+                    // else {
+                    //     setIsEmpty(true)
+                    // }
                 } catch (error) {
                     console.error("获取标题失败:", error);
                 }
@@ -55,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
             }
         };
         fetchTitles();
-    }, [isLoggedIn, isFirstsend, isNew]);
+    }, [isLoggedIn, isFirstsend, isNew, setIsEmpty]);
 
     const handleNewConversation = () => {
         if (isLoggedIn) {

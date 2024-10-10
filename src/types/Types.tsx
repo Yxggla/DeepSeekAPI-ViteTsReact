@@ -76,7 +76,8 @@ export interface SaveDataState {
 
 
 export interface TtmState {
-    isSave: boolean
+    isEmpty: boolean;
+    isSave: boolean;
     isNew: boolean;
     isFirstsend: boolean;
     messages: { content: string; role: string; id: string }[]; // 消息数组
@@ -87,4 +88,5 @@ export interface TtmState {
     setIsNew: (isNew: boolean) => void;
     setIsSave: (isSave: boolean) => void;
     setIsFirstsend: (isFirstsend: boolean) => void;
+    setIsEmpty: (isEmpty: boolean) => void;
 }

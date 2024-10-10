@@ -189,6 +189,7 @@ const ChatDisplay: React.FC = () => {
     const isNew = useTitleToMessageStore(state => state.isNew);
     const setIsNew = useTitleToMessageStore((state) => state.setIsNew);
     const setIsSave = useTitleToMessageStore((state) => state.setIsSave);
+    const setTitle = useTitleToMessageStore((state) => state.setTitle);
     const isSave = useTitleToMessageStore((state) => state.isSave);
     const setIsFirstsend = useTitleToMessageStore((state) => state.setIsFirstsend);
     const saveChatsInformation = async (title: string, firstMessage: string, lastMessage: string) => {
@@ -197,6 +198,7 @@ const ChatDisplay: React.FC = () => {
         } catch (error) {
             console.error("保存聊天信息时出错:", error);
         }
+
     };
 
     useEffect(() => {
@@ -206,20 +208,23 @@ const ChatDisplay: React.FC = () => {
             const title = isNew
                 ? firstMessage.content.substring(0, 8) // 如果是新对话
                 : titles; // 如果不是新对话
+            console.log('title', titles)
             if (title !== '') { // 使用严格比较
+                console.log('触发保存')
                 saveChatsInformation(title, firstMessage.content, lastMessage.content);
+                setIsSave(false)
             }
-            console.log('是isNewm吗', isNew)
             if (isNew) {
                 setIsNew(false);
                 setIsFirstsend(true);
+                setTitle(title)
             }
             else {
                 setIsFirstsend(false);
             }
-            setIsSave(false)
+            console.log('看看是否isSave2', isSave)
         }
-    }, [messages, Loading, isNew, titles, isSave, setIsFirstsend, setIsNew, setIsSave]); // 确保所有依赖项都在这里加 isNew 和 titles 作为依赖项ng 作为依赖项
+    }, [messages, Loading, isNew, titles, isSave, setIsFirstsend, setIsNew, setIsSave, setTitle]); // 确保所有依赖项都在这里加 isNew 和 titles 作为依赖项ng 作为依赖项
 
     useEffect(() => {
         if (containerRef.current) {
