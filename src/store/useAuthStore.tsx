@@ -9,6 +9,7 @@ const useAuthStore = create<AuthState>((set) => ({
         isLoggedIn: true,
         userInformation,
     }),
+    setUser: (user: UserInformation) => set({ userInformation: user }),
     logout: () => set({ isLoggedIn: false, userInformation: null }),
 }));
 

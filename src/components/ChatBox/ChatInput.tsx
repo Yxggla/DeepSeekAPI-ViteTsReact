@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { Input, Button, message as antdMessage } from 'antd';
 import styled from 'styled-components';
 import ApiCallerStore from "../../store/ApiCallerStore.tsx";
-import useAuthStore from '../../store/store'; // 引入 useAuthStore
+import useAuthStore from '../../store/useAuthStore.tsx'; // 引入 useAuthStore
 import LoginModal from '../Auth/Login.tsx';
 import useAuthModal from '../../hooks/useAuthModal.ts';
+import TitleToMessageStore from '../../store/TitleToMessageStore.tsx'
 
 const { TextArea } = Input;
 
@@ -43,7 +44,7 @@ const SendButton = styled(Button)`
 const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit }) => {
     const loading = ApiCallerStore(state => state.loading);
     const setLoading = ApiCallerStore(state => state.setLoading);
-
+    const setIsSave = TitleToMessageStore((state) => state.setIsSave);
     const [inputValue, setInputValue] = useState('');
     const [isComposing, setIsComposing] = useState(false);
     const { isLoggedIn } = useAuthStore(); // 获取登录状态
@@ -61,6 +62,7 @@ const ChatInput: React.FC<{ onSubmit: (message: string) => void }> = ({ onSubmit
                 setLoading(true);
                 onSubmit(inputValue);
                 setInputValue('');
+                setIsSave(true)
             }
         } else {
             antdMessage.warning('请先登录');

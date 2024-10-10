@@ -188,6 +188,9 @@ const ChatDisplay: React.FC = () => {
     const titles = useTitleToMessageStore(state => state.title);
     const isNew = useTitleToMessageStore(state => state.isNew);
     const setIsNew = useTitleToMessageStore((state) => state.setIsNew);
+    const setIsSave = useTitleToMessageStore((state) => state.setIsSave);
+    const isSave = useTitleToMessageStore((state) => state.isSave);
+    const setIsFirstsend = useTitleToMessageStore((state) => state.setIsFirstsend);
     const saveChatsInformation = async (title: string, firstMessage: string, lastMessage: string) => {
         try {
             await saveChats(title, firstMessage, lastMessage);
@@ -197,18 +200,26 @@ const ChatDisplay: React.FC = () => {
     };
 
     useEffect(() => {
-        if (messages.length > 0 && !Loading) {
+        if (messages.length > 1 && !Loading && isSave) { // 确保有足够的消息
             const firstMessage = messages[messages.length - 2];
             const lastMessage = messages[messages.length - 1];
             const title = isNew
                 ? firstMessage.content.substring(0, 8) // 如果是新对话
                 : titles; // 如果不是新对话
-            saveChatsInformation(title, firstMessage.content, lastMessage.content);
-            if (isNew) {
-                setIsNew(false)
+            if (title !== '') { // 使用严格比较
+                saveChatsInformation(title, firstMessage.content, lastMessage.content);
             }
+            console.log('是isNewm吗', isNew)
+            if (isNew) {
+                setIsNew(false);
+                setIsFirstsend(true);
+            }
+            else {
+                setIsFirstsend(false);
+            }
+            setIsSave(false)
         }
-    }, [messages, Loading, isNew, titles]); // 添加 isNew 和 titles 作为依赖项ng 作为依赖项
+    }, [messages, Loading, isNew, titles, isSave, setIsFirstsend, setIsNew, setIsSave]); // 确保所有依赖项都在这里加 isNew 和 titles 作为依赖项ng 作为依赖项
 
     useEffect(() => {
         if (containerRef.current) {
@@ -219,7 +230,6 @@ const ChatDisplay: React.FC = () => {
     useEffect(() => {
         hljs.highlightAll();
     }, []);
-    console.log("123", messages)
     return (
         <Container ref={containerRef}>
             {messages.map((msg, index) => (

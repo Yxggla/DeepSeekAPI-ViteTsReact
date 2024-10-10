@@ -4,7 +4,7 @@ import { Button, Layout, theme } from 'antd';
 import LoginModal from './Auth/Login.tsx';
 import RegisterModal from './Auth/Register.tsx';
 import { HeaderProps } from '../types/Types.tsx';
-import useAuthStore from '../store/store';
+import useAuthStore from '../store/useAuthStore.tsx';
 import useAuthModal from '../hooks/useAuthModal.ts';
 const { Header } = Layout;
 

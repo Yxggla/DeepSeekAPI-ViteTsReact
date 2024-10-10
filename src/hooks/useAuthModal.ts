@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { message } from "antd";
-import { login, getToken, logoutToken } from "../Services/AuthService.tsx";
+import { login, logoutToken } from "../Services/AuthService.tsx";
 import { getUserInformation } from "../Services/User.tsx";
 import { LoginFormValues, UserInformation } from "../types/Types.tsx";
-import useAuthStore from "../store/store";
+import useAuthStore from "../store/useAuthStore.tsx";
+import TitleToMessageStore from "../store/TitleToMessageStore.tsx";
 
 const useAuthModal = () => {
-  const { setUserInformation, logout } = useAuthStore();
+  const setMessages = TitleToMessageStore((state) => state.setMessages);
+  const { setUserInformation, logout, isLoggedIn } = useAuthStore();
   const [isLoginModalVisible, setLoginModalVisible] = useState(false);
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
 
@@ -51,6 +53,7 @@ const useAuthModal = () => {
     logoutToken();
     logout();
     message.success("已登出");
+    setMessages([]);
   };
 
   return {

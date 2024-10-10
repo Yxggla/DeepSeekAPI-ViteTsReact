@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, message as antdMessage } from 'antd';
 import { getTitles, getChats } from '../Services/User';
-import useAuthStore from '../store/store'; // 引入 useAuthStore
+import useAuthStore from '../store/useAuthStore.tsx'; // 引入 useAuthStore
 import useTitleToMessageStore from '../store/TitleToMessageStore';
+import useAuthModal from '../hooks/useAuthModal.ts';
+import LoginModal from './Auth/Login.tsx';
 const { Sider } = Layout;
 
 interface SidebarProps {
@@ -14,38 +16,67 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     const setMessages = useTitleToMessageStore((state) => state.setMessages);
     const setTitle = useTitleToMessageStore((state) => state.setTitle);
     const setIsNew = useTitleToMessageStore((state) => state.setIsNew);
+    const isFirstsend = useTitleToMessageStore((state) => state.isFirstsend);
+    const isNew = useTitleToMessageStore((state) => state.isNew);
+    // const isSave = useTitleToMessageStore((state) => state.isSave);
     const [menuItems, setMenuItems] = useState<{ key: string; label: string }[]>([]);
+    const [selectedKey, setSelectedKey] = useState<string>('');
     const { isLoggedIn } = useAuthStore(); // 获取登录状态
+    const {
+        isLoginModalVisible,
+        showLoginModal,
+        handleLoginModalCancel,
+        handleLogin,
+    } = useAuthModal();
 
     useEffect(() => {
         const fetchTitles = async () => {
             if (isLoggedIn) {
+
                 try {
                     const response = await getTitles();
                     const titles = response; // 获取 API 返回的数据
-                    const items = titles.map((item, index) => ({
+                    const items = titles.map((item, index: number) => ({
                         key: String(index + 1), // 确保每个 key 唯一
                         label: item.title, // 直接使用返回的 title
                     }));
                     setMenuItems(items);
+                    console.log('isFirstsend', isFirstsend);
+                    console.log('是isNewm吗', isNew)
+                    if (isFirstsend && items.length > 0) {
+                        setSelectedKey(items.length.toString()); // 选中最后一个对话
+
+                    }
                 } catch (error) {
                     console.error("获取标题失败:", error);
                 }
+            } else {
+                setMenuItems([]); // 清空菜单项
             }
         };
-
         fetchTitles();
-    }, [isLoggedIn]);
+    }, [isLoggedIn, isFirstsend, isNew]);
 
     const handleNewConversation = () => {
-        setMessages([]); // 清空消息
-        setTitle(''); // 可选：清空标题
-        setIsNew(true)
+        if (isLoggedIn) {
+            setMessages([]); // 清空消息
+            setTitle(''); // 可选：清空标题
+            setIsNew(true);
+            setSelectedKey('');
+        }
+        else {
+            antdMessage.warning('请先登录');
+            showLoginModal();
+        }
     };
 
-    const handleMenuClick = async (label: string) => {
+    const handleMenuClick = async (label: string, key: string) => {
         if (isLoggedIn) {
+            if (selectedKey === key) {
+                return;
+            }
             try {
+                setMessages([]);
                 const chatsResponse = await getChats(label); // 将 label 传递给 getChats
                 const messages = chatsResponse.flatMap((chat: any) => [
                     {
@@ -57,8 +88,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                         role: 'assistant',
                     }
                 ]);
-                setTitle(label)
+                setTitle(label);
                 setMessages(messages);
+                setIsNew(false);
+                setSelectedKey(key);
+                console.log('selectedKey', selectedKey)
             } catch (error) {
                 console.error("获取聊天记录失败:", error);
             }
@@ -67,14 +101,14 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
 
     return (
         <Sider trigger={null} collapsible collapsed={collapsed}>
-            <div className="demo-logo-vertical" />
             <Menu
                 theme="dark"
                 mode="inline"
-                defaultSelectedKeys={['1']}
+                defaultSelectedKeys={[]}
+                selectedKeys={[selectedKey]}
                 items={menuItems.map(item => ({
                     ...item,
-                    onClick: () => handleMenuClick(item.label), // 传递 label
+                    onClick: () => handleMenuClick(item.label, item.key), // 传递 label
                 }))}
             />
             <div style={{ padding: '16px' }}>
@@ -82,6 +116,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                     创建新的对话
                 </Button>
             </div>
+            <LoginModal
+                visible={isLoginModalVisible}
+                key={Date.now()}
+                onCancel={handleLoginModalCancel}
+                onLogin={handleLogin}
+            />
         </Sider>
     );
 };
