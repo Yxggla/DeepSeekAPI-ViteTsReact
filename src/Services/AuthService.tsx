@@ -19,7 +19,7 @@ export const login = async (values: LoginFormValues) => {
         const response = await axios.post(`${import.meta.env.VITE_Backend_API_URL}/login`, values);
         const { token } = response.data;
         // 存储令牌
-        sessionStorage.setItem('token', token);
+        localStorage.setItem('token', token);
         console.log(response.data);
         return response;
     } catch (error) {
@@ -29,12 +29,12 @@ export const login = async (values: LoginFormValues) => {
 
 // 获取存储的token
 export const getToken = () => {
-    return sessionStorage.getItem('token');
+    return localStorage.getItem('token');
 };
 
 // 清除存储的token
 export const logoutToken = () => {
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
 };
 
 

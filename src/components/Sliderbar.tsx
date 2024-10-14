@@ -30,31 +30,28 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         handleLogin,
     } = useAuthModal();
 
-    useEffect(() => {
-        const fetchTitles = async () => {
-            if (isLoggedIn) {
-                try {
-                    const response = await getTitles();
-                    const titles = response; // 获取 API 返回的数据
-                    const items = titles.map((item, index: number) => ({
-                        key: String(index + 1), // 确保每个 key 唯一
-                        label: item.title, // 直接使用返回的 title
-                    }));
-                    setMenuItems(items);
-                    if (isFirstsend) {
-                        setSelectedKey(items.length.toString()); // 选中最后一个对话
-
-                    }
-                    // else {
-                    //     setIsEmpty(true)
-                    // }
-                } catch (error) {
-                    console.error("获取标题失败:", error);
+    const fetchTitles = async () => {
+        if (isLoggedIn) {
+            try {
+                const response = await getTitles();
+                const titles = response; // 获取 API 返回的数据
+                const items = titles.map((item, index: number) => ({
+                    key: String(index + 1), // 确保每个 key 唯一
+                    label: item.title, // 直接使用返回的 title
+                }));
+                setMenuItems(items);
+                if (isFirstsend) {
+                    setSelectedKey(items.length.toString()); // 选中最后一个对话
                 }
-            } else {
-                setMenuItems([]); // 清空菜单项
+            } catch (error) {
+                console.error("获取标题失败:", error);
             }
-        };
+        } else {
+            setMenuItems([]); // 清空菜单项
+        }
+    };
+
+    useEffect(() => {
         fetchTitles();
     }, [isLoggedIn, isFirstsend, isNew, setIsEmpty]);
 
@@ -66,6 +63,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
             setSelectedKey('');
         }
         else {
+            antdMessage.warning('请先登录');
+            showLoginModal();
+        }
+    };
+
+    const handleRefresh = () => {
+        if (isLoggedIn) {
+            fetchTitles(); // 调用 fetchTitles 以刷新标题
+        } else {
             antdMessage.warning('请先登录');
             showLoginModal();
         }
@@ -115,6 +121,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
             <div style={{ padding: '16px' }}>
                 <Button type="primary" onClick={handleNewConversation} block>
                     创建新的对话
+                </Button>
+            </div>
+            <div style={{ padding: '16px' }}>
+                <Button type="primary" onClick={handleRefresh} block>
+                    点击刷新
                 </Button>
             </div>
             <LoginModal
