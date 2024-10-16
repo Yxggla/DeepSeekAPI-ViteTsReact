@@ -123,11 +123,13 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
                     创建新的对话
                 </Button>
             </div>
-            <div style={{ padding: '16px' }}>
-                <Button type="primary" onClick={handleRefresh} block>
-                    点击刷新
-                </Button>
-            </div>
+            {isLoggedIn && ( // 仅在用户登录时显示按钮
+                <div style={{ padding: '16px' }}>
+                    <Button type="primary" onClick={handleRefresh} block>
+                        点击刷新
+                    </Button>
+                </div>
+            )}
             <LoginModal
                 visible={isLoginModalVisible}
                 key={Date.now()}
